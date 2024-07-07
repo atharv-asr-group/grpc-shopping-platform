@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+message RegistrationRequest {
+    string address = 1;
+    string uuid = 2;
+}
+
+message RegistrationResponse {
+    string message = 1;
+}
+
+message ItemDetails {
+    int32 item_id = 1;
+    string name = 2;
+    string category = 3;
+    int32 quantity = 4;
+    string description = 5;
+    string seller_address = 6;
+    double price = 7;
+    string seller_uuid = 8;
+    double rating = 9;
+}
+
+message UpdateItemRequest {
+    int32 item_id = 1;
+    double new_price = 2;
+    int32 new_quantity = 3;
+    string seller_address = 4;
+    string seller_uuid = 5;
+}
+
+message UpdateItemResponse {
+    string message = 1;
+}
+
+message DisplayItemsRequest {
+    string seller_address = 1;
+    string seller_uuid = 2;
+}
+
+message DeleteItemRequest {
+    int32 item_id = 1;
+    string seller_address = 2;
+    string seller_uuid = 3;
+}
+
+message DeleteItemResponse {
+    string message = 1;
+}
+
+message SellItemRequest {
+    string name = 1;
+    string category = 2;
+    int32 quantity = 3;
+    string description = 4;
+    string seller_address = 5;
+    double price = 6;
+    string seller_uuid = 7;
+}
+
+message SellItemResponse {
+    string message = 1;
+    int32 item_id = 2;
+}
+
+message SearchItemRequest {
+    string item_name = 1;
+    string category = 2;
+}
+
+message SearchItemResponse {
+    repeated ItemDetails items = 1;
+}
+
+message BuyItemRequest {
+    int32 item_id = 1;
+    int32 quantity = 2;
+    string buyer_address = 3;
+}
+
+message BuyItemResponse {
+    string message = 1;
+    int32 item_id = 2;
+}
+
+message AddToWishListRequest {
+    int32 item_id = 1;
+    string buyer_address = 2;
+}
+
+message AddToWishListResponse {
+    string message = 1;
+}
+
+message RateItemRequest {
+    int32 item_id = 1;
+    int32 rating = 2;
+    string buyer_address = 3;
+}
+
+message RateItemResponse {
+    string message = 1;
+}
+
+
+
+service Market {
+    rpc RegisterSeller(RegistrationRequest) returns (RegistrationResponse) {}
+    rpc SellItem(SellItemRequest) returns (SellItemResponse) {}
+    rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse) {}
+    rpc DisplayItems(DisplayItemsRequest) returns (stream ItemDetails) {}
+    rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse) {}
+    rpc SearchItem(SearchItemRequest) returns (stream ItemDetails) {}
+    rpc BuyItem(BuyItemRequest) returns (BuyItemResponse) {}
+    rpc AddToWishList(AddToWishListRequest) returns (AddToWishListResponse) {}
+    rpc RateItem(RateItemRequest) returns (RateItemResponse) {}
+}
