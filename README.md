@@ -1,53 +1,120 @@
-<H1 align="center"> Distributed Shopping Platform </H1>
+# Distributed Shopping Platform
 
-<p align="Left">
-This project implements a distributed shopping platform using Google Cloud, gRPC, and Protocol Buffers. The platform simulates a central marketplace where buyers and sellers interact through a Market (central platform) without direct communication between each other. The system is designed to run on multiple virtual machine instances in Google Cloud, each representing a different node (Market, Buyer, Seller).
-</p>
+This project implements a distributed shopping platform using **gRPC** and **Protocol Buffers**. It simulates a central marketplace where buyers and sellers interact through a Market (central platform) without direct communication between each other. The system is designed to run on multiple nodes, each representing a different role (Market, Buyer, Seller).
 
-## `Components`
-  <ul>
-  <li>Market (Central Platform)</li>
-  <li>Seller (Client)</li>
-  <li>Buyer (Client)</li>
-  </ul>
+## Features
 
-### `Market (Central Platform):`
-The Market acts as the central hub, managing all seller and buyer interactions. It maintains seller accounts, product listings, transaction logs, reviews, and notifications. Sellers and buyers connect to the Market using a known IP:port combination.
+- **Market (Central Platform):**
+  - Acts as the central hub for managing interactions between buyers and sellers.
+  - Maintains seller accounts, product listings, transaction logs, reviews, and notifications.
 
-### `Seller (Client):`
-Each seller operates on a unique address and interacts with the Market to manage their inventory and sales. Sellers can register, add, update, delete, and view their products on the Market. They also receive notifications for any transactions related to their products.
+- **Seller (Client):**
+  - Allows sellers to register, add, update, delete, and view their products.
+  - Sellers receive notifications for transactions related to their products.
 
-### `Buyer (Client):`
-Buyers interact with the Market to search for products, make purchases, wishlist items, and rate products. Buyers also receive notifications about updates to their wishlisted items.
+- **Buyer (Client):**
+  - Enables buyers to search for products, make purchases, wishlist items, and rate products.
+  - Buyers receive notifications about updates to their wishlisted items.
 
-## `gRPC Implementation`
-  <ul>
-  <li>Seller ↦ Market</li>
-  <li>Buyer ↦ Market</li>
-  <li>Market ↦ Buyer/Seller</li>
-  </ul>
+## Project Structure
 
-### `Seller ↦ Market:`
-- **RegisterSeller**: Sellers register with the Market by providing their IP:port and a UUID. The Market responds with SUCCESS or FAIL.
-- **SellItem**: Sellers post new items on the Market, including details like product name, category, quantity, and price. The Market assigns a unique item ID and responds with SUCCESS, FAIL, or the item ID.
-- **UpdateItem**: Sellers update item details on the Market. Successful updates trigger notifications to interested buyers.
-- **DeleteItem**: Sellers delete items from the Market.
-- **DisplaySellerItems**: Sellers can view all their listed items, including detailed information.
+```
+.
+├── [`buyer.py`](buyer.py )               # Buyer client implementation
+├── [`seller.py`](seller.py )              # Seller client implementation
+├── [`market_server.py`](market_server.py )       # Market server implementation
+├── [`market.proto`](market.proto )           # Protocol Buffers definition
+├── [`market_pb2.py`](market_pb2.py )          # Generated Python code from [`market.proto`](market.proto )
+├── [`market_pb2_grpc.py`](market_pb2_grpc.py )     # Generated gRPC code from [`market.proto`](market.proto )
+├── [`README.md`](README.md )              # Project documentation
+└── __pycache__/           # Compiled Python files
+```
 
-### `Buyer ↦ Market:`
-- **SearchItem**: Buyers search for items by name or category. The Market returns a list of matching items.
-- **BuyItem**: Buyers purchase items from the Market, which automatically updates the item quantity and triggers notifications to the seller.
-- **AddToWishList**: Buyers add items to their wishlist to receive notifications on updates.
-- **RateItem**: Buyers rate items, which updates the Market's records.
+## Components
 
-### `Market ↦ Buyer/Seller:`
-- **NotifyClient**: The Market sends notifications to buyers and sellers about updates to items they are interested in or have listed.
+### 1. **Market (Central Platform)**
+The Market server manages all interactions between buyers and sellers. It provides the following functionalities:
+- **Seller Operations:**
+  - Register sellers.
+  - Add, update, delete, and display items.
+- **Buyer Operations:**
+  - Search for items.
+  - Buy items.
+  - Add items to a wishlist.
+  - Rate items.
+- **Notifications:**
+  - Notify sellers about purchases.
+  - Notify buyers about updates to wishlisted items.
 
+### 2. **Seller (Client)**
+The seller client interacts with the Market to:
+- Register as a seller.
+- Add new items for sale.
+- Update or delete existing items.
+- View all listed items.
 
-## `License`
-MIT © Atharv Srivastava 2024<br/>
+### 3. **Buyer (Client)**
+The buyer client interacts with the Market to:
+- Search for items by name or category.
+- Purchase items.
+- Add items to a wishlist.
+- Rate purchased items.
 
-<p align="Left"> Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish,
-  distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: </p> <p align="Left"> The above copyright notice and this permission notice shall be included in all copies or substantial 
-    portions of the Software. </p> <p align="Left"> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-      DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. </p> <p align="center"> --- EOF --- </p> 
+## gRPC API
+
+The project uses **gRPC** for communication between the Market, Buyer, and Seller. The API is defined in the [`market.proto`](market.proto) file. Key RPC methods include:
+
+### Seller ↔ Market
+- **RegisterSeller**: Register a seller with the Market.
+- **SellItem**: Add a new item to the Market.
+- **UpdateItem**: Update item details.
+- **DeleteItem**: Remove an item from the Market.
+- **DisplayItems**: View all items listed by the seller.
+
+### Buyer ↔ Market
+- **SearchItem**: Search for items by name or category.
+- **BuyItem**: Purchase an item.
+- **AddToWishList**: Add an item to the buyer's wishlist.
+- **RateItem**: Rate an item.
+
+### Notifications
+- The Market sends notifications to buyers and sellers about updates to items they are interested in or have listed.
+
+## How to Run
+
+1. **Start the Market Server:**
+   Run the `market_server.py` file to start the Market server.
+   ```bash
+   python market_server.py
+   ```
+
+2. **Run the Seller Client:**
+   Use the `seller.py` file to interact with the Market as a seller.
+   ```bash
+   python seller.py
+   ```
+
+3. **Run the Buyer Client:**
+   Use the `buyer.py` file to interact with the Market as a buyer.
+   ```bash
+   python buyer.py
+   ```
+
+## Dependencies
+
+- Python 3.8+
+- gRPC
+- Protocol Buffers
+
+Install the required dependencies using:
+```bash
+pip install grpcio grpcio-tools
+```
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+**Author:** Atharv Srivastava
